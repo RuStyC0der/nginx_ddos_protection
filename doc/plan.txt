@@ -1,8 +1,7 @@
 cyber sec
 ddos - what is this
 ddos protection solution types
-fail2ban as close solution
-cons proc 
+fail2ban as close solution / cons proc 
 why python
 iops and regex
 common cloud iops issues and resource utilization
