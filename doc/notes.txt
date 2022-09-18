@@ -1,0 +1,7 @@
+.env config file
+    read chunk size
+    database refresh time
+
+need to create datastore for last read chunk position and and rotation detection (can we just check if file pointer exists?)
+
+need to decide about datastore in grneral (serialization of dict or sqlite)
