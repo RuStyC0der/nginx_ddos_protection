@@ -1,0 +1,23 @@
+
+datastore_measurement:
+    dict_Datasourse:
+        case1:
+            ip_count: 5000000 (5M)
+            size_in_memory: 167772256 (160Mb)
+            serialized_size: 58085731 (56Mb)
+            write_time: 1s
+            read_time: 1s
+            test_machine:
+                iops: 500000
+                storage throughput: about 4GB/sec
+        case2:
+            ip_count: 50000000 (50M)
+            size_in_memory: 1342177368 (1280Mb)
+            serialized_size: 467614371 (446Mb)
+            write_time: 9s
+            read_time: 11s
+            test_machine:
+                iops: 500000
+                storage_throughput: about 4GB/sec
+
+    
