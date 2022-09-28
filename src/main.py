@@ -11,3 +11,4 @@ reader = BatchReader(logfile)
 datastore = {}
 
 for ip in reader:
+    pass
