@@ -13,21 +13,23 @@ class IptablesBlockMethod(BanMethod):
         """
         on init we createing new empty chain inside "INPUT" table to hold all blocked users separately
         then we redirect all connections to custom chain
+        init is an idempotent method
         """
         table = iptc.Table(iptc.Table.FILTER)
 
-        # return if chain exists
+        # do nothing if chain exists
         for chain in table.chains:
             if chain.name == self.custom_chain_name:
                 self.custom_chain = chain
                 return
         
-        # create chain and add to chain input
+        # create and configure chain
         self.custom_chain = table.create_chain(self.custom_chain_name)
         custom_chain_return_rule = iptc.Rule()
         custom_chain_return_rule.create_target("RETURN")
         self.custom_chain.append_rule(custom_chain_return_rule)
 
+        # add link to chain "input" 
         input_chain = iptc.Chain(table, "INPUT")
         custom_chain_redirect_rule = iptc.Rule()
         custom_chain_redirect_rule.create_target(self.custom_chain_name)
