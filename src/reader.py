@@ -1,4 +1,8 @@
-class Reader():
+class BatchReader():
 
-    def __init__(self, target, parse_method):
+
+
+    CHUNK_SIZE = 8092
+
+    def __init__(self, target):
         pass
