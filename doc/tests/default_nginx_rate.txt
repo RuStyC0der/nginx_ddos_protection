@@ -1,0 +1,86 @@
+this is test to discover how type of storage impacts performance
+i used default unconfigured nginx in most cases
+
+case1:
+    environment: home pc (6-core cpu. 500000 iops storage)
+    conf: default page
+    description: nginx with stdout as log file (with docker)
+    load: 80 threads with 700 connections
+    rate 43000 - 46000 req/sec
+
+case2:
+    environment: home pc (6-core cpu. 500000 iops storage)
+    conf: default page
+    description: nginx with /dev/null as log file (aka no log)
+    load: 80 threads with 700 connections
+    rate: 100k - 115k req/sec
+
+case3:
+    environment: home pc (6-core cpu. 500000 iops storage)
+    conf: default page
+    description: nginx with file on fs as log file (fast ssd)
+    load: 80 threads with 700 connections
+    rate: 88k - 92k req/sec
+
+case4:
+    environment: home pc (6-core cpu. 500000 iops storage)
+    conf: default page
+    description: nginx with /dev/shm as log file (aka log in RAM)
+    load: 80 threads with 700 connections
+    rate: 97k - 100k req/sec
+
+case5:
+    environment: aws ec2 (1-core 3000 iops storage)
+    conf: default page
+    description: nginx with stdin as log file (with docker)
+    load: 80 threads with 700 connections
+    rate: 1700 - 2000 req/sec
+
+case6:
+    environment: aws ec2 (1-core 3000 iops storage)
+    conf: default page
+    description: nginx with /dev/null as log file (aka no log)
+    load: 80 threads with 700 connections
+    rate: 7800 - 8000 req/sec
+
+case7:
+    environment: aws ec2 (1-core 3000 iops storage)
+    conf: default page
+    description: nginx with stdin as log file (with docker) (detached)
+    load: 80 threads with 700 connections
+    rate: 3300 - 3400 req/sec
+
+case8:
+    environment: aws ec2 (1-core 3000 iops storage)
+    conf: default page
+    description: nginx with /dev/shm as log file (aka log in RAM)
+    load: 80 threads with 700 connections
+    rate: 7200 - 7600 req/sec
+
+case9:
+    environment: aws ec2 (1-core 3000 iops storage)
+    conf: default page
+    description: nginx with file on fs as log file (aws ebs ssd)
+    load: 80 threads with 700 connections
+    rate: 6600 - 6700 req/sec
+
+case10:
+    environment: aws ec2 (1-core 3000 iops storage)
+    conf: return 204 (no body)
+    description: nginx with file on fs as log file (aws ebs ssd)
+    load: 80 threads with 700 connections
+    rate: 9100 - 9200 req/sec
+
+case11:
+    environment: aws ec2 (1-core 3000 iops storage)
+    conf: return 204 (no body)
+    description: nginx with file on fs as log file (aws ebs ssd) with buffering enabled (fuffer size is 64k)
+    load: 80 threads with 700 connections
+    rate: 10000 - 11000 req/sec
+
+case12:
+    environment: aws ec2 (1-core 3000 iops storage)
+    conf: return 204 (no body)
+    description: log off
+    load: 80 threads with 700 connections
+    rate: 10000 - 11000 req/sec
