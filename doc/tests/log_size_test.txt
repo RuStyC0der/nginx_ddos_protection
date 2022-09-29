@@ -1,0 +1,10 @@
+
+case1:
+    rate: 150k req/sec
+    log size: ~20M
+    time: 5s
+
+
+log placement in RAM is unsafe
+
+
