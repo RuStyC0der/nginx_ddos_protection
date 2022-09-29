@@ -1,4 +1,5 @@
 from time import sleep
+import os
 
 class SplitReader():
     """
@@ -14,9 +15,21 @@ class SplitReader():
     def __init__(self, target_file, read_from_begin=False):
         pass
 
-file_path = "access.log"
 
-with open(file_path, "rt") as f:
-    print(f.tell())
-    f.seek(0, 2)
-    print(f.tell())
+    def tail(f, lines=15, _buffer=4098):
+        """Tail a file and get X lines from the end"""
+        lines_found = []
+
+        block_counter = -1
+        while len(lines_found) < lines:
+            try:
+                f.seek(block_counter * _buffer, os.SEEK_END)
+            except IOError:  # either file is too small, or too many lines requested
+                f.seek(0)
+                lines_found = f.readlines()
+                break
+
+            lines_found = f.readlines()
+            block_counter -= 1
+
+        return lines_found[-lines:]
