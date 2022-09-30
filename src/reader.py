@@ -2,7 +2,7 @@ from time import sleep, time
 import os
 
 
-class SplitReader():
+class ChunkReader():
     """
     chunk reader
     it reads file then splits with separator and returns tuple
@@ -32,7 +32,8 @@ class SplitReader():
             position = self.end_position - _buffer
             while (len(lines_found) < lines) and position >= 0:
                 f.seek(position)
-                got_lines = f.read(_buffer).split('\n')[1:-1]
+                got_lines = [ item + '\n' for item in f.read(_buffer).split('\n')[1:-1]]
+
                 lines_found = got_lines + lines_found
                 
                 position -= _buffer
@@ -45,22 +46,21 @@ class SplitReader():
             got_lines = f.readlines(self.lines_per_chunk)
             self.buffered_lines.extend(got_lines)
             self.end_position = f.tell()
+
     def __iter__(self):
         return self
 
     def __next__(self):
         if (len(self.buffered_lines) <= self.lines_per_chunk / 2):
             self.load_chunk()
+        print(self.buffered_lines)
         try:
             return self.buffered_lines.pop(0)
         except IndexError:
             return None
 
 if __name__ == '__main__':
-    rd = SplitReader("nginx_test_conf/log/access.log", 5)
+    rd = ChunkReader("nginx_test_conf/log/access.log", 5)
     for i in rd:
         print(i)
         sleep(1)
-    # rdi = rd.__iter__()
-    # for i in range(100):
-    #     print(rdi.__next__())
