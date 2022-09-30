@@ -9,7 +9,6 @@ class ChunkReader():
     """
 
     # read from end of file
-    separator = "/"
     lines_per_chunk = 500
 
     buffered_lines = []
@@ -53,14 +52,17 @@ class ChunkReader():
     def __next__(self):
         if (len(self.buffered_lines) <= self.lines_per_chunk / 2):
             self.load_chunk()
-        print(self.buffered_lines)
         try:
             return self.buffered_lines.pop(0)
         except IndexError:
             return None
+    
+    def next(self):
+        return self.__next__()
 
 if __name__ == '__main__':
     rd = ChunkReader("nginx_test_conf/log/access.log", 5)
-    for i in rd:
-        print(i)
-        sleep(1)
+    rd.next()
+    # for i in rd:
+    #     print(i)
+    #     sleep(1)
