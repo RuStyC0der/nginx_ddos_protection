@@ -12,23 +12,38 @@ parser = SplitParser(reader)
 
 frequency_datastore = {}
 
-period_seconds = 60
-ratelimit = 1000
-sleep_seconds = 1
+period_seconds = 0.01
+ratelimit = 10
+sleep_seconds = 0.5
 
 
 def filter_ips(frequency_datastore, treshold):
     for ip in frequency_datastore:
         if frequency_datastore[ip] > treshold:
-            pass
-            # ban ip
+            print(f"ban {ip}")
 
-time_now = time()
-for ip in parser:
+time_previous = 0
+time_delta = 0
+for sample in parser:
 
-    if not ip:
+    # print(sample)
+    # sleep(0.1)
+
+    if time_delta > period_seconds:
+        filter_ips(frequency_datastore, ratelimit)
+        frequency_datastore = {}
+        time_delta = 0
+
+    if not sample:
         sleep(sleep_seconds)
+        time_delta += sleep_seconds * 1000
         continue
+
+    ip = sample[0]
+    timestamp = float(sample[1])
+
+    time_delta += timestamp - time_previous
+    time_previous = timestamp
 
     try:
         frequency_datastore[ip] += 1 
