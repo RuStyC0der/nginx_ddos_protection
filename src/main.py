@@ -16,27 +16,27 @@ class Model(object):
 
         config = Config()
 
-        self.period_seconds = config['RATELIMIT_PERIOD_SECONDS']
-        self.ratelimit = config['RATELIMIT']
-        self.sleep_seconds = config['SLEEP_ON_EMPTY_LOG_SECONDS']
+        self.period_seconds = float(config['RATELIMIT_PERIOD_SECONDS'])
+        self.ratelimit = float(config['RATELIMIT'])
+        self.sleep_seconds = float(config['SLEEP_ON_EMPTY_LOG_SECONDS'])
 
         logger.info('model initialized')
 
 
 
-    def calculate_frequency(self):
+    def calculate_frequency_and_ban(self):
         time_previous = 0
         time_delta = 0
 
         for sample in parser:
             if time_delta > self.period_seconds:
                 logger.info(f"end of time sample reached. filtering results")
-                self.filter_ips(frequency_datastore, self.ratelimit)
-                frequency_datastore = {}
+                self.filter_ips()
+                self.frequency_datastore = {}
                 time_delta = 0
 
             if not sample:
-                logger.info(f"nd of log file reached. will wait {self.sleep_seconds} seconds")
+                logger.info(f"end of log file reached. will wait {self.sleep_seconds} seconds")
                 sleep(self.sleep_seconds)
                 time_delta += self.sleep_seconds * 1000
                 continue
@@ -48,10 +48,10 @@ class Model(object):
             time_previous = timestamp
 
             try:
-                frequency_datastore[ip] += 1 
+                self.frequency_datastore[ip] += 1 
             except KeyError:
-                logger.debug(f"IP {ip} added to datastore")
-                frequency_datastore[ip] = 1
+                logger.debug(f"IP {ip} added to datastore first time per time sample")
+                self.frequency_datastore[ip] = 1
 
     def filter_ips(self):
         for ip in self.frequency_datastore:
@@ -68,4 +68,6 @@ if __name__ == '__main__':
     reader = ChunkReader(config['SOURCE_LOG_FILE'])
     parser = SplitParser(reader)
 
-    model = Model(datastore=parser, ban_engine=ban_engine)
+    model = Model(datasource=parser, ban_engine=ban_engine)
+
+    model.calculate_frequency_and_ban()
