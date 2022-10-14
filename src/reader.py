@@ -50,7 +50,7 @@ class ChunkReader():
             got_lines = f.readlines(self.lines_per_chunk)
             self.buffered_lines.extend(got_lines)
             self.end_position = f.tell()
-            logger.info(f"file chunk loaded successfully, end position is {self.end_position}")
+            logger.debug(f"file chunk loaded successfully, end position is {self.end_position}")
 
     def __iter__(self):
         return self
