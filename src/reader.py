@@ -61,7 +61,7 @@ class ChunkReader():
         try:
             return self.buffered_lines.pop(0)
         except IndexError:
-            logger.info(f"end of file reached")
+            logger.debug(f"end of file reached")
             return None
     
     def next(self):

@@ -22,7 +22,7 @@ class SplitParser():
     def __next__(self):
         line = self._datasource.next()
         if not line:
-            logger.info(f"datasource is empty")
+            logger.debug(f"datasource is empty")
             return None
             
         parsed_line = line.strip().split(self.separator)
