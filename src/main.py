@@ -4,6 +4,8 @@ from reader import ChunkReader
 from parser import SplitParser
 from helpers import get_logger, Config
 
+logger = get_logger(__name__)
+
 class Model(object):
 
     frequency_datastore = {}
@@ -18,6 +20,8 @@ class Model(object):
         self.ratelimit = config['RATELIMIT']
         self.sleep_seconds = config['SLEEP_ON_EMPTY_LOG_SECONDS']
 
+        logger.info('model initialized')
+
 
 
     def calculate_frequency(self):
@@ -26,11 +30,13 @@ class Model(object):
 
         for sample in parser:
             if time_delta > self.period_seconds:
+                logger.info(f"end of time sample reached. filtering results")
                 self.filter_ips(frequency_datastore, self.ratelimit)
                 frequency_datastore = {}
                 time_delta = 0
 
             if not sample:
+                logger.info(f"nd of log file reached. will wait {self.sleep_seconds} seconds")
                 sleep(self.sleep_seconds)
                 time_delta += self.sleep_seconds * 1000
                 continue
@@ -44,12 +50,16 @@ class Model(object):
             try:
                 frequency_datastore[ip] += 1 
             except KeyError:
+                logger.debug(f"IP {ip} added to datastore")
                 frequency_datastore[ip] = 1
 
     def filter_ips(self):
         for ip in self.frequency_datastore:
             if self.frequency_datastore[ip] > self.ratelimit:
+                logger.info(f"IP {ip} due to ban")
                 self.ban_engine.ban(ip)
+                logger.info(f"IP {ip} banned")
+
 
 if __name__ == '__main__':
     config = Config()
