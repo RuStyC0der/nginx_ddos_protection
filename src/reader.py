@@ -1,7 +1,9 @@
+from distutils.log import error
+from helpers import get_logger
 from time import sleep, time
 import os
 
-
+logger = get_logger(__name__)
 class ChunkReader():
     """
     chunk reader
@@ -17,7 +19,9 @@ class ChunkReader():
         if os.path.isfile(target_file) and os.access(target_file, os.R_OK):
             self.file = target_file
             self.buffered_lines = self._tail(last_bytes_to_read_count)
+            logger.info(f"succesfully opened file and tail {last_bytes_to_read_count} lines")
         else:
+            logger.error(f"Unable to open file '{target_file}'")
             raise IOError("file not exist or not readable")
         
 
@@ -37,6 +41,7 @@ class ChunkReader():
                 
                 position -= _buffer
             
+            logger.info(f"{lines} tailed successfully")
             return lines_found[-lines:]
 
     def load_chunk(self):
@@ -45,6 +50,7 @@ class ChunkReader():
             got_lines = f.readlines(self.lines_per_chunk)
             self.buffered_lines.extend(got_lines)
             self.end_position = f.tell()
+            logger.info(f"file chunk loaded successfully, end position is {self.end_position}")
 
     def __iter__(self):
         return self
@@ -55,14 +61,15 @@ class ChunkReader():
         try:
             return self.buffered_lines.pop(0)
         except IndexError:
+            logger.info(f"end of file reached")
             return None
     
     def next(self):
         return self.__next__()
 
 if __name__ == '__main__':
-    rd = ChunkReader("nginx_test_conf/log/access.log", 5)
-    rd.next()
-    # for i in rd:
-    #     print(i)
-    #     sleep(1)
+    rd = ChunkReader("nginx_test_conf/log/access.log", 500)
+    # rd.next()
+    for i in rd:
+        print(i)
+        sleep(0.01)
