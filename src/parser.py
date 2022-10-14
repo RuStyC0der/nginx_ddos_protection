@@ -1,3 +1,7 @@
+from helpers import get_logger
+
+logger = get_logger(__name__)
+
 class SplitParser():
     """
     this parser gets string like <ip>|<timestamp><new line>
@@ -18,6 +22,7 @@ class SplitParser():
     def __next__(self):
         line = self._datasource.next()
         if not line:
+            logger.info(f"datasource is empty")
             return None
             
         parsed_line = line.strip().split(self.separator)
