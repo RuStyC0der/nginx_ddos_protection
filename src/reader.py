@@ -1,6 +1,5 @@
-from distutils.log import error
 from helpers import get_logger
-from time import sleep, time
+from time import sleep
 import os
 
 logger = get_logger(__name__)
